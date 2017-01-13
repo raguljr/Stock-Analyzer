@@ -1,0 +1,82 @@
+<div id="chart"></div>
+<div>
+	<%= text_field_tag 'v' %>
+  <%= button_tag('Add')  %>
+</div>
+<div>
+	
+</div>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+	var ndata="";
+	var fdata=[];
+	
+
+	var chart = c3.generate({
+	bindto: '#chart',
+    data: {
+        x: 'x',
+//        xFormat: '%Y%m%d', // 'xFormat' can be used as custom format of 'x'
+        columns: [
+            ['x', '2017-01-03', '2017-01-04', '2017-01-05', '2017-01-06', '2017-01-09', '2017-01-10','2017-01-11'],
+//            ['x', '20130101', '20130102', '20130103', '20130104', '20130105', '20130106'],
+            ['Facebook', 116.82, 118.69,120.67, 123.41, 124.9, 124.35, 126.09],
+            ['Google', 786.13,786.9,794.02,806.15,806.65,804.79,807.91]
+        ]
+    },
+    axis: {
+        x: {
+            type: 'timeseries',
+            tick: {
+                format: '%Y-%m-%d'
+            }
+        }
+    }
+});
+
+setTimeout(function () {
+    chart.load({
+        columns: [
+            ['Amazon', 753.29,757.18,780.45,795.99,796.86,795.9,797.02]
+        ]
+    });
+}, 1000);
+
+
+$('button').click(function(){
+		//console.log($('#v').val());
+		nurl='https://www.quandl.com/api/v3/datasets/WIKI/'+$('#v').val()+'.json?&column_index=4&start_date=2017-01-01&end_date=2017-01-12&collapse=daily&api_key=cBJXzebH25YRUyhjwAmr';
+		$.ajax({url:nurl,
+		success:function(res){
+			ndata=res.dataset.data;
+			//console.log(ndata);
+
+			for(var x in ndata){
+			
+			fdata.push(ndata[x][1]);
+			}
+			fdata.push($('#v').val());
+			fdata.reverse();
+
+			chart.load({
+	        columns: [
+	            fdata
+	       		 ]
+	   		 });
+
+			console.log(fdata);
+			fdata=[];
+			$('#v').val("");
+		}
+		});
+
+
+
+	});
+
+
+});
+	
+</script>
