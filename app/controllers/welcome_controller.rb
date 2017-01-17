@@ -11,4 +11,11 @@ class WelcomeController < ApplicationController
   	@com=Company.all
   	render json: @com
   end
+
+  def del
+
+    @compd = Company.find(params[:d])
+    @compd.destroy
+  end
+
 end

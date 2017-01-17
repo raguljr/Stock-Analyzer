@@ -1,13 +1,15 @@
 <div id="chart"></div>
 <div>
 	<%= text_field_tag 'v' %>
-  <%= button_tag('Add')  %>
+  <%= button_tag 'Add', :id=> "add"  %>
 </div>
 <div>
 	<ul>
 		<% @comp.each do |c| %>
-		<li>
-			<%= c.name %>
+		<li id='<%= c.id %>'>
+
+			<span><%= c.name %></span>
+			<button id='<%= c.id %>' >Delete</button>
 		</li>
 		<% end %>
 	</ul>
@@ -25,6 +27,39 @@ $(document).ready(function(){
 	var nnurl="";
 	var cn="";
 	var j=0;
+	var se="";
+
+	$('ul').on('click','button',function(){
+		se=$(this).parent().children().first().text();
+		//alert(se)
+
+		$.ajax({
+			url:'del',
+			data: {d : $(this).attr('id')},
+			success:function(){
+				dataload();
+				chart.unload({
+				    ids: [se]
+				});
+			}
+		});
+	});
+	// $('span').click(function(){
+	// 	se=$(this).parent().children().first().text();
+	// 	//alert(se)
+
+	// 	$.ajax({
+	// 		url:'del',
+	// 		data: {d : $(this).attr('id')},
+	// 		success:function(){
+	// 			dataload();
+	// 			chart.unload({
+	// 			    ids: [se]
+	// 			});
+	// 		}
+	// 	});
+
+	// });
 
 	$.ajax({
 		url:'part',
@@ -32,9 +67,9 @@ $(document).ready(function(){
 			for(i in cname){
 				dataAr.push(cname[i].name);
 			}
-			//console.log(dataAr);
+			console.log(dataAr);
 
-			for(j=3;j<dataAr.length;j++){
+			for(j=0;j<dataAr.length;j++){
 				//console.log(dataAr[j]);
 				finds(j);
 
@@ -89,7 +124,7 @@ $(document).ready(function(){
 
 				for(var i in ress){
 					//console.log(ress[i].name)
-					ll+="<li>"+ress[i].name+"</li>";
+					ll+="<li id='"+ress[i].id+"' ><span>"+ress[i].name+"</span><button id='"+ress[i].id +"'>Delete</button>"+"</li>";
 				}
 
 				$('ul').html(ll);
@@ -107,9 +142,9 @@ $(document).ready(function(){
         columns: [
             ['x', '2017-01-03', '2017-01-04', '2017-01-05', '2017-01-06', '2017-01-09', '2017-01-10','2017-01-11'],
 //            ['x', '20130101', '20130102', '20130103', '20130104', '20130105', '20130106'],
-            ['Facebook', 116.82, 118.69,120.67, 123.41, 124.9, 124.35, 126.09],
-            ['Google', 786.13,786.9,794.02,806.15,806.65,804.79,807.91],
-            ['Amazon', 753.29,757.18,780.45,795.99,796.86,795.9,797.02]
+             ['FB', 116.82, 118.69,120.67, 123.41, 124.9, 124.35, 126.09],
+            // ['GOOG', 786.13,786.9,794.02,806.15,806.65,804.79,807.91],
+            // ['AMZN', 753.29,757.18,780.45,795.99,796.86,795.9,797.02]
         ]
     },
     axis: {
@@ -131,7 +166,7 @@ $(document).ready(function(){
 // }, 1000);
 
 
-$('button').click(function(){
+$('#add').click(function(){
 		//console.log($('#v').val());
 		nurl='https://www.quandl.com/api/v3/datasets/WIKI/'+$('#v').val()+'.json?&column_index=4&start_date=2017-01-01&end_date=2017-01-12&collapse=daily&api_key=cBJXzebH25YRUyhjwAmr';
 		$.ajax({url:nurl,
